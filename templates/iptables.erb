@@ -1,0 +1,108 @@
+#
+# This file is managed by puppet class 'iptables'
+#
+# iptables save/restore ruleset
+#
+<%
+defaults = {
+  'table' => 'filter',
+  'chain' => 'INPUT',
+  'in_int' => nil,
+  'out_int' => nil,
+  'src' => nil,
+  'dst' => nil,
+  'proto' => nil,
+  'sport' => nil,
+  'dport' => nil,
+  'match' => nil,
+  'match_param' => nil,
+  'action' => 'ACCEPT'
+}
+-%>
+*filter
+:INPUT <%= @filter_input_policy %>
+:FORWARD <%= @filter_forward_policy %>
+:OUTPUT <%= @filter_output_policy %>
+<%
+if @ruleset
+  @ruleset.sort.each do |name,r|
+    rule = defaults.merge(r)
+    if rule['table'] == 'filter'
+-%>
+# <%= name %>
+-A <%= rule['chain'] %><%=
+  " -i #{rule['in_int']}" unless rule['in_int'].nil? -%><%=
+  " -o #{rule['out_int']}" unless rule['out_int'].nil? -%><%=
+  " -s #{rule['src']}" unless rule['src'].nil? -%><%=
+  " -d #{rule['dst']}" unless rule['dst'].nil? -%><%=
+  " -p #{rule['proto']}" unless rule['proto'].nil? -%><%=
+  " --sport #{rule['sport']}" unless rule['sport'].nil? or rule['proto'].nil? -%><%=
+  " --dport #{rule['dport']}" unless rule['dport'].nil? or rule['proto'].nil? -%><%=
+  " -m #{rule['match']} #{rule['match_param']}" unless rule['match'].nil? or rule['match_param'].nil? -%><%=
+  " -j #{rule['action']}"
+%>
+<%
+    end
+  end
+end
+-%>
+COMMIT
+*nat
+:PREROUTING <%= @nat_prerouting_policy %>
+:INPUT <%= @nat_input_policy %>
+:OUTPUT <%= @nat_output_policy %>
+:POSTROUTING <%= @nat_postrouting_policy %>
+<%
+if @ruleset
+  @ruleset.sort.each do |name,r|
+    rule = defaults.merge(r)
+    if rule['table'] == 'nat'
+-%>
+# <%= name %>
+-A <%= rule['chain'] %><%=
+  " -i #{rule['in_int']}" unless rule['in_int'].nil? -%><%=
+  " -o #{rule['out_int']}" unless rule['out_int'].nil? -%><%=
+  " -s #{rule['src']}" unless rule['src'].nil? -%><%=
+  " -d #{rule['dst']}" unless rule['dst'].nil? -%><%=
+  " -p #{rule['proto']}" unless rule['proto'].nil? -%><%=
+  " --sport #{rule['sport']}" unless rule['sport'].nil? -%><%=
+  " --dport #{rule['dport']}" unless rule['dport'].nil? -%><%=
+  " -m #{rule['match']} #{rule['match_param']}" unless rule['match'].nil? or rule['match_param'].nil? -%><%=
+  " -j #{rule['action']}"
+%>
+<%
+    end
+  end
+end
+-%>
+COMMIT
+*mangle
+:PREROUTING <%= @mangle_prerouting_policy %>
+:OUTPUT <%= @mangle_output_policy %>
+:FORWARD <%= @mangle_forward_policy %>
+:INPUT <%= @mangle_input_policy %>
+:POSTROUTING <%= @nat_postrouting_policy %>
+<%
+if @ruleset
+  @ruleset.sort.each do |name,r|
+    rule = defaults.merge(r)
+    if rule['table'] == 'mangle'
+-%>
+# <%= name %>
+-A <%= rule['chain'] %><%=
+  " -i #{rule['in_int']}" unless rule['in_int'].nil? -%><%=
+  " -o #{rule['out_int']}" unless rule['out_int'].nil? -%><%=
+  " -s #{rule['src']}" unless rule['src'].nil? -%><%=
+  " -d #{rule['dst']}" unless rule['dst'].nil? -%><%=
+  " -p #{rule['proto']}" unless rule['proto'].nil? -%><%=
+  " --sport #{rule['sport']}" unless rule['sport'].nil? -%><%=
+  " --dport #{rule['dport']}" unless rule['dport'].nil? -%><%=
+  " -m #{rule['match']} #{rule['match_param']}" unless rule['match'].nil? or rule['match_param'].nil? -%><%=
+  " -j #{rule['action']}"
+%>
+<%
+    end
+  end
+end
+-%>
+COMMIT
