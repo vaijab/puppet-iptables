@@ -49,25 +49,23 @@ Default and valid hash parameters and values.
 
 ### Examples
 
-```yaml
----
-classes:
-  - 'iptables'
-
-iptables::filter_input_policy: DROP
-
-iptables::rules:
-  '010_allow_established_related':
-    match: conntrack
-    match_param: '--ctstate ESTABLISHED,RELATED'
-  '020_allow_lo':
-    in_int: lo
-  '030_allow_ssh':
-    proto: tcp
-    dport: 22
-  '999_drop_all':
-    action: DROP
-```
+    ---
+    classes:
+      - 'iptables'
+    
+    iptables::filter_input_policy: DROP
+    
+    iptables::rules:
+      '010_allow_established_related':
+        match: conntrack
+        match_param: '--ctstate ESTABLISHED,RELATED'
+      '020_allow_lo':
+        in_int: lo
+      '030_allow_ssh':
+        proto: tcp
+        dport: 22
+      '999_drop_all':
+        action: DROP
 
 
 ## Limitations
