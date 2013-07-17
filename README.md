@@ -18,7 +18,13 @@ It gives great flexibility when used with hiera.
 Valid values: `installed`, `absent` or specific package version. Default:
 `installed`.
 
-* `rules` - a hash of hashes. Each hash prepresnets a single iptables rule. `nil`
+* `chains` - a hash of hashes. Each hash represents a single custom iptables chain.
+Default and valid hash parameters and values. 
+  * `table` - table name. Default: `filter`.
+  * `chain` - custom chain name. Default: `nil`. If you do not specify a `chain`
+    parameter then the custom chain will not be created.
+
+* `rules` - a hash of hashes. Each hash represents a single iptables rule. `nil`
 parameter value means that this parameter will be excluded from a generated rule.
 Default and valid hash parameters and values. 
   * `table` - table name. Default: `filter`.
@@ -49,30 +55,40 @@ Default and valid hash parameters and values.
 
 ### Examples
 
-    ---
-    classes:
-      - 'iptables'
-    
-    iptables::filter_input_policy: DROP
-    
-    iptables::rules:
-      '010_allow_established_related':
-        match: conntrack
-        match_param: '--ctstate ESTABLISHED,RELATED'
-      '020_allow_lo':
-        in_int: lo
-      '030_allow_ssh':
-        proto: tcp
-        dport: 22
-      '999_drop_all':
-        action: DROP
+```yaml
+---
+classes:
+  - 'iptables'
+
+iptables::filter_input_policy: DROP
+
+iptables::chains:
+  '010_custom_chain_OURHOSTS':
+    chain: OUTHOSTS
+    table: filter
+
+iptables::rules:
+  '002_add_our_hosts_to_OURHOSTS':
+    src: '192.168.0.0/24,1.2.3.4'
+    action: OURHOSTS
+  '010_allow_established_related':
+    match: conntrack
+    match_param: '--ctstate ESTABLISHED,RELATED'
+  '020_allow_lo':
+    in_int: lo
+  '030_allow_ssh':
+    proto: tcp
+    dport: 22
+    action: OURHOSTS
+  '999_drop_all':
+    action: DROP
+```
 
 
 ## Limitations
 * Cannot correct a ruleset if someone manually inserts/removes rules via command line.
 * No IPv6 support, but should be fairly easy to extend the module to support it.
 * No easy way to use multiple match module within a single rule.
-* New chains cannot be created, but I have an idea how to build this very easily.
 
 
 # Authors

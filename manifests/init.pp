@@ -16,6 +16,7 @@ class iptables(
   $onboot                    = true,
   $package                   = 'installed',
   $ruleset                   = hiera_hash('iptables::rules', undef),
+  $chainset                  = hiera_hash('iptables::chains', undef),
   $filter_input_policy       = 'ACCEPT',
   $filter_output_policy      = 'ACCEPT',
   $filter_forward_policy     = 'ACCEPT',

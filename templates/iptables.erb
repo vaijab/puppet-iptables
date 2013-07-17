@@ -18,11 +18,28 @@ defaults = {
   'match_param' => nil,
   'action' => 'ACCEPT'
 }
+
+chain_defaults = {
+  'chain' => nil,
+  'table' => 'filter'
+}
 -%>
 *filter
 :INPUT <%= @filter_input_policy %>
 :FORWARD <%= @filter_forward_policy %>
 :OUTPUT <%= @filter_output_policy %>
+<%
+if @chainset
+  @chainset.sort.each do |name,c|
+    chain = chain_defaults.merge(c)
+    if chain['table'] == 'filter' and not chain['chain'].nil?
+-%>
+:<%= chain['chain'] %> -
+<%
+    end
+  end
+end
+-%>
 <%
 if @ruleset
   @ruleset.sort.each do |name,r|
@@ -53,6 +70,18 @@ COMMIT
 :OUTPUT <%= @nat_output_policy %>
 :POSTROUTING <%= @nat_postrouting_policy %>
 <%
+if @chainset
+  @chainset.sort.each do |name,c|
+    chain = chain_defaults.merge(c)
+    if chain['table'] == 'nat' and not chain['chain'].nil?
+-%>
+:<%= chain['chain'] %> -
+<%
+    end
+  end
+end
+-%>
+<%
 if @ruleset
   @ruleset.sort.each do |name,r|
     rule = defaults.merge(r)
@@ -82,6 +111,18 @@ COMMIT
 :FORWARD <%= @mangle_forward_policy %>
 :INPUT <%= @mangle_input_policy %>
 :POSTROUTING <%= @nat_postrouting_policy %>
+<%
+if @chainset
+  @chainset.sort.each do |name,c|
+    chain = chain_defaults.merge(c)
+    if chain['table'] == 'mangle' and not chain['chain'].nil?
+-%>
+:<%= chain['chain'] %> -
+<%
+    end
+  end
+end
+-%>
 <%
 if @ruleset
   @ruleset.sort.each do |name,r|
