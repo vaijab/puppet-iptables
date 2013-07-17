@@ -55,34 +55,31 @@ Default and valid hash parameters and values.
 
 ### Examples
 
-```yaml
----
-classes:
-  - 'iptables'
-
-iptables::filter_input_policy: DROP
-
-iptables::chains:
-  '010_custom_chain_OURHOSTS':
-    chain: OUTHOSTS
-    table: filter
-
-iptables::rules:
-  '002_add_our_hosts_to_OURHOSTS':
-    src: '192.168.0.0/24,1.2.3.4'
-    action: OURHOSTS
-  '010_allow_established_related':
-    match: conntrack
-    match_param: '--ctstate ESTABLISHED,RELATED'
-  '020_allow_lo':
-    in_int: lo
-  '030_allow_ssh':
-    proto: tcp
-    dport: 22
-    action: OURHOSTS
-  '999_drop_all':
-    action: DROP
-```
+    ---
+    classes:
+      - 'iptables'
+    
+    iptables::filter_input_policy: DROP
+    
+    iptables::chains:
+      '010_custom_chain_OURHOSTS':
+        chain: OURHOSTS
+    
+    iptables::rules:
+      '002_add_our_hosts_to_OURHOSTS':
+        chain: OURHOSTS
+        src: '192.168.0.0/24,1.2.3.4'
+      '010_allow_established_related':
+        match: conntrack
+        match_param: '--ctstate ESTABLISHED,RELATED'
+      '020_allow_lo':
+        in_int: lo
+      '030_allow_ssh':
+        proto: tcp
+        dport: 22
+        action: OURHOSTS
+      '999_drop_all':
+        action: DROP
 
 
 ## Limitations
