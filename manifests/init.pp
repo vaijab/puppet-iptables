@@ -37,6 +37,12 @@ class iptables(
       $ipt_restore  = '/usr/sbin/iptables-restore'
       $config_file  = '/etc/sysconfig/iptables'
     }
+    CentOS: {
+      $package_name = 'iptables'
+      $service_name = 'iptables'
+      $ipt_restore  = '/sbin/iptables-restore'
+      $config_file  = '/etc/sysconfig/iptables'
+    }
     Debian,Ubuntu: {
       $package_name = ['iptables', 'iptables-persistent']
       $service_name = 'iptables-persistent'
