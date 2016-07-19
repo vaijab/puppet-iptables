@@ -19,14 +19,14 @@ Valid values: `installed`, `absent` or specific package version. Default:
 `installed`.
 
 * `chains` - a hash of hashes. Each hash represents a single custom iptables chain.
-Default and valid hash parameters and values. 
+Default and valid hash parameters and values.
   * `table` - table name. Default: `filter`.
   * `chain` - custom chain name. Default: `nil`. If you do not specify a `chain`
     parameter then the custom chain will not be created.
 
 * `rules` - a hash of hashes. Each hash represents a single iptables rule. `nil`
 parameter value means that this parameter will be excluded from a generated rule.
-Default and valid hash parameters and values. 
+Default and valid hash parameters and values.
   * `table` - table name. Default: `filter`.
   * `chain` - chain name. Default: `INPUT`.
   * `in_int` - incoming traffic interface. Default: `nil`.
@@ -81,6 +81,13 @@ Default and valid hash parameters and values.
       '999_drop_all':
         action: DROP
 
+    # NAT example - iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    iptables::rules:
+      100_default_nat:
+        table: nat
+        chain: POSTROUTING
+        out_int: eth0
+        action: MASQUERADE
 
 ## Limitations
 * Cannot correct a ruleset if someone manually inserts/removes rules via command line.
